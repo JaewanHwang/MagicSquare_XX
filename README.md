@@ -36,6 +36,16 @@ validate(grid: int[4][4]) -> { valid: bool, failedLines: Line[] }
 2. **즉시 판정** — 손 검산 없이 입력 즉시 유효/무효
 3. **재현 방지** — 같은 격자는 항상 같은 판정
 
+## RED 단계 체크리스트 (D-LOC-01 / FR-LOC-01)
+> Phase: RED · Layer: entity · Track: Logic(D-*) · 상세: [docs/TODO_D-LOC-01.md](docs/TODO_D-LOC-01.md)
+
+- [ ] **C2C 추적** — PRD §5.1/§2/§3.2 인용 + 판단 포함 To-Do 1개 + D-LOC-01 Given/When/Then 정리
+- [ ] **RED 설계표** — `find_blanks(grid)` 대상 / Invariant(좌표 1-index·blank⇔0·row-major) / Expected RED Failure 확정
+- [ ] **테스트 플랜** — `tests/entity/test_d_loc_01.py` 함수명·conftest 픽스처(`g1_grid`,`full_grid`)·pytest 명령 정의
+- [ ] **ECB·Mock 점검** — Domain Mock 금지 · entity E001~E005 emit 금지 · `entity → *` import 없음
+- [ ] **RED 스켈레톤 작성** — `/red-skeleton`으로 `test_d_loc_01_blank_coords_row_major` 실패 테스트 생성
+- [ ] **FAIL 확인** — `python -m pytest tests/entity/test_d_loc_01.py::test_d_loc_01_blank_coords_row_major -v` 로 `ModuleNotFoundError`/`ImportError` 인용
+
 ## 프로젝트 구조
 ```
 MagicSquare_XX/
@@ -44,7 +54,8 @@ MagicSquare_XX/
 │  ├─ 01.MagicSquare_ProblemDefinition_Report.md
 │  └─ 01_REPORT.md
 ├─ docs/
-│  └─ PRD.md                  # 제품 요구사항 정의서 (R-G-I-O · 사양 · Test Loop)
+│  ├─ PRD.md                  # 제품 요구사항 정의서 (R-G-I-O · 사양 · Test Loop)
+│  └─ TODO_D-LOC-01.md        # D-LOC-01 RED 단계 TODO List
 └─ prompting/                 # 프롬프트 / 인터뷰 기록
    └─ 01_mom_test_interview_transcript.md
 ```
