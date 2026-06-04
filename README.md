@@ -46,6 +46,39 @@ validate(grid: int[4][4]) -> { valid: bool, failedLines: Line[] }
 - [ ] **RED 스켈레톤 작성** — `/red-skeleton`으로 `test_d_loc_01_blank_coords_row_major` 실패 테스트 생성
 - [ ] **FAIL 확인** — `python -m pytest tests/entity/test_d_loc_01.py::test_d_loc_01_blank_coords_row_major -v` 로 `ModuleNotFoundError`/`ImportError` 인용
 
+## 테스트 실행 (가상환경)
+> Windows 기준. 프로젝트 루트(`MagicSquare_XX/`)에서 실행한다. 셸에 따라 활성화 명령만 다르다.
+
+**Git Bash**
+```bash
+# 1) 가상환경 생성
+python -m venv .venv
+
+# 2) 활성화 (프롬프트에 (.venv) 표시 확인)
+source .venv/Scripts/activate
+
+# 3) 의존성 설치 (editable + dev) — src/ 패키지가 import 경로에 잡힘
+python -m pip install --upgrade pip
+python -m pip install -e ".[dev]"
+
+# 4) 테스트 실행
+python -m pytest -v                                  # 전체
+python -m pytest tests/entity tests/control -q       # Logic Track(D-*)만
+python -m pytest tests/entity/test_d_loc_01.py -v    # 단일 파일
+
+# 5) 비활성화
+deactivate
+```
+
+**PowerShell** — 생성·설치·실행 명령은 동일하고, 활성화만 다음과 같다.
+```powershell
+.\.venv\Scripts\Activate.ps1
+#  실행 정책 오류 시 현재 세션에만 허용:
+#  Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+```
+
+> 참고: `pyproject.toml`의 `pythonpath = ["src"]` 덕분에 editable 설치 없이도 pytest는 `entity` 패키지를 찾는다. 설치(`-e .`)를 하면 venv 어디서든 `import entity`가 가능하다.
+
 ## 프로젝트 구조
 ```
 MagicSquare_XX/

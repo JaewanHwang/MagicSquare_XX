@@ -1,4 +1,4 @@
-import pytest
+from entity.locator import find_blank_coords
 
 
 class TestDLoc01:
@@ -6,4 +6,4 @@ class TestDLoc01:
         # Given: G1 격자 (0이 2개 — (2,2), (3,3))
         # When: find_blank_coords(grid_g1) 호출
         # Then: [(2,2),(3,3)] 반환 (1-index, row-major)
-        pytest.fail("RED: D-LOC-01 — 구현 없음, 의도적 실패")
+        assert find_blank_coords(grid_g1) == [(2, 2), (3, 3)]
