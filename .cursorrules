@@ -1,0 +1,37 @@
+# MagicSquare_XX — Project Rules (draft)
+
+## 도메인 (Domain)
+- 4×4 부분 마방진(partial magic square)을 다룬다.
+- 빈칸(0)은 정확히 2개. 채워진 값은 1~16 범위의 정수이며 중복 불가.
+- 마방진 상수(magic constant)는 34 (행/열/대각 합).
+- 정답 출력 형식: `int[6]` = `[r1, c1, n1, r2, c2, n2]`.
+  - 좌표 `r`, `c`는 1-index (1~4).
+  - `n`은 해당 빈칸에 들어갈 값.
+
+## 오류 코드 (Error Codes)
+- E001~E007 은 boundary 계층에서만 처리/검증한다.
+- entity 계층은 E001~E005 를 절대 처리하지 않는다 (검증 책임 분리).
+
+## 아키텍처 (ECB)
+- 의존 방향: boundary → control → entity (단방향).
+- entity 는 어떤 계층도 import 하지 않는다 (`entity → *` 금지).
+- 계층 책임: boundary=입출력/검증, control=흐름/조합, entity=순수 도메인 로직.
+
+## Dual-Track 테스트
+- Logic Track: entity / control 대상. Domain Mock 금지 (실제 객체로 검증).
+- UI Track: boundary 대상. Mock 허용.
+- 테스트 ID 규칙:
+  - Logic: `D-*`, 파일명 `test_d_*.py`
+  - UI: `U-*`, 파일명 `test_u_*.py`
+
+## TDD 규칙
+- 사이클: RED → GREEN → REFACTOR 를 엄격히 따른다.
+- 금지: assert 완화, `skip`, `xfail` 로 실패를 회피하지 않는다.
+- MagicConstant 는 SSOT(Single Source of Truth)로 관리한다.
+  - 34, 16 같은 리터럴을 코드 곳곳에 산재시키지 않는다.
+
+## AI 행동 규칙
+- 모든 응답은 한국어로 작성한다.
+- TDD 작업 시 매 단계에서 Phase / Layer / Track 을 명시적으로 선언한다.
+  - 예) `Phase: RED | Layer: entity | Track: Logic(D-*)`
+- git commit 은 사용자가 명시적으로 요청할 때만 수행한다.
