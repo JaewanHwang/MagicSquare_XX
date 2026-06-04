@@ -1,7 +1,7 @@
 """Golden Master(Approval) 테스트 헬퍼.
 
-`assert_matches_golden(actual, relative)`:
-- 실제 출력(actual)을 `tests/golden/<relative>` 기준 파일과 비교한다.
+`assert_matches_golden(actual, relative_path)`:
+- 실제 출력(actual)을 `tests/golden/<relative_path>` 기준 파일과 비교한다.
 - 환경변수 `UPDATE_GOLDEN=1`이면 기준 파일을 생성/갱신만 하고 통과한다.
 - 그 외에는 기준 파일과 정확히 일치해야 하며, 불일치 시 diff를 함께 보고한다.
 
@@ -34,8 +34,8 @@ def _format_diff(expected, actual, golden_path):
     return f"Golden mismatch: {golden_path}\n" + "".join(diff)
 
 
-def assert_matches_golden(actual, relative):
-    golden_path = GOLDEN_ROOT / relative
+def assert_matches_golden(actual, relative_path):
+    golden_path = GOLDEN_ROOT / relative_path
     normalized = _normalize(actual)
 
     if os.environ.get(UPDATE_ENV):

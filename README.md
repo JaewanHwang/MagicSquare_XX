@@ -36,15 +36,21 @@ validate(grid: int[4][4]) -> { valid: bool, failedLines: Line[] }
 2. **즉시 판정** — 손 검산 없이 입력 즉시 유효/무효
 3. **재현 방지** — 같은 격자는 항상 같은 판정
 
-## RED 단계 체크리스트 (D-LOC-01 / FR-LOC-01)
-> Phase: RED · Layer: entity · Track: Logic(D-*) · 상세: [docs/TODO_D-LOC-01.md](docs/TODO_D-LOC-01.md)
+## TDD 진행 현황 (D-LOC-01 / FR-LOC-01)
+> Layer: entity · Track: Logic(D-*) · 상세: [docs/TODO_D-LOC-01.md](docs/TODO_D-LOC-01.md)
 
-- [ ] **C2C 추적** — PRD §5.1/§2/§3.2 인용 + 판단 포함 To-Do 1개 + D-LOC-01 Given/When/Then 정리
-- [ ] **RED 설계표** — `find_blanks(grid)` 대상 / Invariant(좌표 1-index·blank⇔0·row-major) / Expected RED Failure 확정
-- [ ] **테스트 플랜** — `tests/entity/test_d_loc_01.py` 함수명·conftest 픽스처(`g1_grid`,`full_grid`)·pytest 명령 정의
-- [ ] **ECB·Mock 점검** — Domain Mock 금지 · entity E001~E005 emit 금지 · `entity → *` import 없음
-- [ ] **RED 스켈레톤 작성** — `/red-skeleton`으로 `test_d_loc_01_blank_coords_row_major` 실패 테스트 생성
-- [ ] **FAIL 확인** — `python -m pytest tests/entity/test_d_loc_01.py::test_d_loc_01_blank_coords_row_major -v` 로 `ModuleNotFoundError`/`ImportError` 인용
+| STEP | Phase | 산출물 | 상태 |
+| --- | --- | --- | --- |
+| 3 | RED | `tests/entity/test_d_loc_01.py` (`pytest.fail` 스켈레톤) | ✅ |
+| 4 | GREEN | `src/entity/locator.py` `find_blank_coords` + `constants.py`(SSOT) | ✅ |
+| 5 | Golden Master | `tests/_approval.py` + `tests/golden/d_loc_01_g1.approved.txt` | ✅ |
+| 6 | REFACTOR | `assert_matches_golden` 파라미터 명명 정리(C1) | ✅ |
+
+- [x] **C2C 추적** — PRD §5.1/§2/§3.2 인용 + 판단 포함 To-Do 1개 + D-LOC-01 Given/When/Then
+- [x] **RED → GREEN** — `find_blank_coords(grid)` → `[(2,2),(3,3)]` row-major (1-index)
+- [x] **Golden Master** — `UPDATE_GOLDEN=1` 기준 생성 후 matched 검증
+- [x] **ECB·Mock** — Domain Mock 금지 · entity E001~E005 미emit · `entity → *` import 없음
+- 현재 `python -m pytest -v` → **2 passed**
 
 ## 테스트 실행 (가상환경)
 > Windows 기준. 프로젝트 루트(`MagicSquare_XX/`)에서 실행한다. 셸에 따라 활성화 명령만 다르다.
@@ -77,20 +83,29 @@ deactivate
 #  Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 ```
 
-> 참고: `pyproject.toml`의 `pythonpath = ["src"]` 덕분에 editable 설치 없이도 pytest는 `entity` 패키지를 찾는다. 설치(`-e .`)를 하면 venv 어디서든 `import entity`가 가능하다.
+> 참고: `pyproject.toml`의 `pythonpath = ["src", "tests"]` 덕분에 editable 설치 없이도 pytest가 `entity` 패키지와 `_approval` 헬퍼를 찾는다. 설치(`-e .`)를 하면 venv 어디서든 `import entity`가 가능하다.
 
 ## 프로젝트 구조
 ```
 MagicSquare_XX/
 ├─ README.md                  # 본 문서
-├─ Report/                    # 문제 정의 보고서
-│  ├─ 01.MagicSquare_ProblemDefinition_Report.md
-│  └─ 01_REPORT.md
-├─ docs/
-│  ├─ PRD.md                  # 제품 요구사항 정의서 (R-G-I-O · 사양 · Test Loop)
-│  └─ TODO_D-LOC-01.md        # D-LOC-01 RED 단계 TODO List
-└─ prompting/                 # 프롬프트 / 인터뷰 기록
-   └─ 01_mom_test_interview_transcript.md
+├─ pyproject.toml             # pytest 설정 (pythonpath=src,tests)
+├─ src/
+│  ├─ entity/                 # 순수 도메인 (ECB: 외부 import 금지)
+│  │  ├─ constants.py         # SSOT 상수 (MAGIC_SUM=34, GRID_SIZE=4 …)
+│  │  └─ locator.py           # find_blank_coords(grid)
+│  ├─ control/                # 흐름/조합 (예정)
+│  └─ boundary/               # 입출력/검증 (예정)
+├─ tests/
+│  ├─ conftest.py             # grid_g1 픽스처 (순수 데이터)
+│  ├─ _approval.py            # Golden Master 헬퍼 assert_matches_golden
+│  ├─ golden/                 # 승인된 기준 출력 (.approved.txt)
+│  └─ entity/test_d_loc_01.py # D-LOC-01 (assert + golden)
+├─ Report/                    # STEP별 보고서 (01~06)
+├─ Prompting/                 # 세션 트랜스크립트 (01~06)
+└─ docs/
+   ├─ PRD.md                  # 제품 요구사항 정의서
+   └─ TODO_D-LOC-01.md        # D-LOC-01 TODO List
 ```
 
 ## 문서 읽는 순서
